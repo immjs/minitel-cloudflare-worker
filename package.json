@@ -1,7 +1,7 @@
 {
-  "name": "minitel-minipavi",
-  "version": "1.0.0",
-  "description": "An adaptor between Minipavi and the JS minitel ecosystem",
+  "name": "minitel-cloudflare-worker",
+  "version": "1.1.0",
+  "description": "A cloudflare worker for access through MiniPAVI",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,16 +21,12 @@
   },
   "homepage": "https://github.com/immjs/minitel-minipavi#readme",
   "dependencies": {
-    "fastify": "^4.28.1",
     "minitel-standalone": "^1.9.4",
-    "ws": "^8.18.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240725.0",
-    "@types/ws": "^8.5.11",
     "prettier": "3.3.3",
-    "typescript": "^5.5.4",
-    "ws-duplex-bridge": "^1.0.1"
+    "typescript": "^5.5.4"
   }
 }

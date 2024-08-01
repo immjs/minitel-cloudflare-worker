@@ -1,14 +1,10 @@
-import { FastifyInstance, FastifyServerFactory } from 'fastify';
-import { WebSocket } from 'ws';
+import { Duplex } from 'node:stream';
 interface MinipaviHandlerOptions {
     version?: string;
-    port: number;
-    host: string;
     providePavi?: boolean;
     provideDirectUrl?: boolean;
-    https?: boolean;
-    serverFactory?: FastifyServerFactory;
-    withFastify?: (server: FastifyInstance) => any;
 }
-export declare function createMinipaviHandler(minitelFactory: (ws: WebSocket) => any, options: MinipaviHandlerOptions): Promise<void>;
+export declare function createMinipaviHandler(minitelFactory: (ws: Duplex, req: Request) => any, options?: MinipaviHandlerOptions): Promise<{
+    fetch(request: Request): Promise<Response | undefined>;
+}>;
 export {};

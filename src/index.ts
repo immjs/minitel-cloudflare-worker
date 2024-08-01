@@ -40,7 +40,7 @@ const paviSchema = z.object({
 
 export async function createMinipaviHandler(
   minitelFactory: (ws: Duplex, req: Request) => any,
-  options: MinipaviHandlerOptions,
+  options: MinipaviHandlerOptions = {},
 ) {
   const fullOptions: Required<MinipaviHandlerOptions> = {
     version: '1.0',

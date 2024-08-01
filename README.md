@@ -19,7 +19,6 @@ Opens up an HTTP(s) server for access through minipavi
 
 ```tsx
 import { Minitel, TextNode } from 'minitel-standalone';
-import { DuplexBridge } from 'ws-duplex-bridge';
 import { createMinipaviHandler } from 'minitel-cloudflare-worker';
 
 export default createMinipaviHandler(
@@ -30,10 +29,6 @@ export default createMinipaviHandler(
     minitel.renderToStream();
 
     setTimeout(() => stream.end(), 10_000);
-  },
-  {
-    host: '0.0.0.0',
-    port: 4545,
   },
 ).then(() => console.log('MiniPavi handler ready!'));
 ```
