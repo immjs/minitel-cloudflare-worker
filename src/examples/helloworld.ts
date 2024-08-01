@@ -1,5 +1,5 @@
 import { Minitel, TextNode } from 'minitel-standalone';
-import { createMinipaviHandler } from '..';
+import { createMinipaviHandler } from '../index.js';
 
 export default createMinipaviHandler(
   (stream) => {

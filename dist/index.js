@@ -1,18 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createMinipaviHandler = createMinipaviHandler;
-const zod_1 = require("zod");
-const node_stream_1 = require("node:stream");
-const paviSchema = zod_1.z.object({
-    PAVI: zod_1.z.object({
-        version: zod_1.z.string().regex(/^(\d+\.)*\d+$/g),
-        uniqueId: zod_1.z.string().regex(/^\d+$/g),
-        remoteAddr: zod_1.z.string(),
-        typesocket: zod_1.z.enum(['websocketssl', 'websocket', 'other']),
-        versionminitel: zod_1.z.string().regex(/^\x01.{3}\x04$/g),
-        content: zod_1.z.array(zod_1.z.string()),
-        context: zod_1.z.any(),
-        fctn: zod_1.z.enum([
+import { z } from 'zod';
+import { Duplex } from 'node:stream';
+const paviSchema = z.object({
+    PAVI: z.object({
+        version: z.string().regex(/^(\d+\.)*\d+$/g),
+        uniqueId: z.string().regex(/^\d+$/g),
+        remoteAddr: z.string(),
+        typesocket: z.enum(['websocketssl', 'websocket', 'other']),
+        versionminitel: z.string().regex(/^\x01.{3}\x04$/g),
+        content: z.array(z.string()),
+        context: z.any(),
+        fctn: z.enum([
             'ENVOI',
             'SUITE',
             'RETOUR',
@@ -31,9 +28,9 @@ const paviSchema = zod_1.z.object({
             'BGCALL-SIMU',
         ]),
     }),
-    URLPARAMS: zod_1.z.record(zod_1.z.string(), zod_1.z.string()).optional(),
+    URLPARAMS: z.record(z.string(), z.string()).optional(),
 });
-function createMinipaviHandler(minitelFactory, options = {}) {
+export function createMinipaviHandler(minitelFactory, options = {}) {
     const fullOptions = {
         version: '1.0',
         providePavi: false,
@@ -53,7 +50,7 @@ function createMinipaviHandler(minitelFactory, options = {}) {
                 const server = webSocketPair[1];
                 (async () => {
                     server.accept();
-                    const stream = new node_stream_1.Duplex();
+                    const stream = new Duplex();
                     server.addEventListener('message', (event) => stream.write(event.data));
                     stream.on('data', (data) => server.send(data));
                     server.addEventListener('close', () => stream.end());
