@@ -4,7 +4,7 @@ import { Duplex } from 'node:stream';
 interface MinipaviHandlerOptions {
   version?: string;
   providePavi?: boolean;
-  provideDirectUrl?: boolean;
+  provideUrlParams?: boolean;
 }
 
 const paviSchema = z.object({
@@ -45,7 +45,7 @@ export function createMinipaviHandler(
   const fullOptions: Required<MinipaviHandlerOptions> = {
     version: '1.0',
     providePavi: false,
-    provideDirectUrl: false,
+    provideUrlParams: false,
     ...options,
   };
 
@@ -62,16 +62,14 @@ export function createMinipaviHandler(
         const client = webSocketPair[0];
         const server = webSocketPair[1];
   
-        (async () => {
-          server.accept();
-          const stream = new Duplex();
-          server.addEventListener('message', (event) => stream.write(event.data));
-          stream.on('data', (data) => server.send(data));
-          server.addEventListener('close', () => stream.end());
-          stream.on('close', () => server.close());
+        server.accept();
+        const stream = new Duplex();
+        server.addEventListener('message', (event) => stream.write(event.data));
+        stream.on('data', (data) => server.send(data));
+        server.addEventListener('close', () => stream.end());
+        stream.on('close', () => server.close());
 
-          server.addEventListener('open', () => minitelFactory(stream, request));
-        })();
+        setImmediate(() => minitelFactory(stream, request));
 
         return new Response(null, {
           status: 101,
@@ -86,19 +84,19 @@ export function createMinipaviHandler(
         await request.json(),
       );
 
-      if (!success) {
-        return new Response(`Malformed request: ${JSON.stringify(error)}`, {
-          status: 400,
-        });
-      }
+      // if (!success) {
+      //   return new Response(`Malformed request: ${JSON.stringify(error)}`, {
+      //     status: 400,
+      //   });
+      // }
 
       if (reqUrl.pathname === '/') {
         const newParams = new URLSearchParams();
 
         if (fullOptions.providePavi)
-          newParams.append('pavi', JSON.stringify(data.PAVI));
-        if (fullOptions.provideDirectUrl && 'DIRECTURL' in data)
-          newParams.append('directUrl', JSON.stringify(data.DIRECTURL));
+          newParams.append('pavi', JSON.stringify(data?.PAVI));
+        if (fullOptions.provideUrlParams && 'URLPARAMS' in (data || {}))
+          newParams.append('urlParams', JSON.stringify(data?.URLPARAMS));
 
         return new Response(
           JSON.stringify({
