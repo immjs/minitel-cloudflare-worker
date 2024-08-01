@@ -1,6 +1,6 @@
 {
   "name": "minitel-cloudflare-worker",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A cloudflare worker for access through MiniPAVI",
   "main": "dist/index.js",
   "type": "module",
