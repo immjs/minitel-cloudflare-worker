@@ -22,11 +22,11 @@
   },
   "homepage": "https://github.com/immjs/minitel-minipavi#readme",
   "dependencies": {
-    "minitel-standalone": "^1.9.4",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240725.0",
+    "minitel-standalone": "^1.9.5",
     "prettier": "3.3.3",
     "typescript": "^5.5.4"
   }
