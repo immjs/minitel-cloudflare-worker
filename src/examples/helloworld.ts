@@ -10,4 +10,4 @@ export default createMinipaviHandler(
 
     setTimeout(() => stream.end(), 10_000);
   },
-).then(() => console.log('MiniPavi handler ready!'));
+);

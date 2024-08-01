@@ -38,7 +38,7 @@ const paviSchema = z.object({
   URLPARAMS: z.record(z.string(), z.string()).optional(),
 });
 
-export async function createMinipaviHandler(
+export function createMinipaviHandler(
   minitelFactory: (ws: Duplex, req: Request) => any,
   options: MinipaviHandlerOptions = {},
 ) {

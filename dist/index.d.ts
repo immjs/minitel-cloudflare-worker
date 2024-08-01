@@ -4,7 +4,7 @@ interface MinipaviHandlerOptions {
     providePavi?: boolean;
     provideDirectUrl?: boolean;
 }
-export declare function createMinipaviHandler(minitelFactory: (ws: Duplex, req: Request) => any, options?: MinipaviHandlerOptions): Promise<{
+export declare function createMinipaviHandler(minitelFactory: (ws: Duplex, req: Request) => any, options?: MinipaviHandlerOptions): {
     fetch(request: Request): Promise<Response | undefined>;
-}>;
+};
 export {};

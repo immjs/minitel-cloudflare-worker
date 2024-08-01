@@ -7,4 +7,4 @@ exports.default = (0, __1.createMinipaviHandler)((stream) => {
     minitel.appendChild(new minitel_standalone_1.TextNode('Hello world!', {}, minitel));
     minitel.renderToStream();
     setTimeout(() => stream.end(), 10_000);
-}).then(() => console.log('MiniPavi handler ready!'));
+});

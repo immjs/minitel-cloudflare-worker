@@ -33,7 +33,7 @@ const paviSchema = zod_1.z.object({
     }),
     URLPARAMS: zod_1.z.record(zod_1.z.string(), zod_1.z.string()).optional(),
 });
-async function createMinipaviHandler(minitelFactory, options = {}) {
+function createMinipaviHandler(minitelFactory, options = {}) {
     const fullOptions = {
         version: '1.0',
         providePavi: false,
