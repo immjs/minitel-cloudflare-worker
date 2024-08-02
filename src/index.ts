@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Duplex } from 'node:stream';
+import { Duplex, DuplexOptions } from 'node:stream';
 
 interface MinipaviHandlerOptions {
   version?: string;
@@ -38,6 +38,46 @@ const paviSchema = z.object({
   URLPARAMS: z.record(z.string(), z.string()).optional(),
 });
 
+export class DuplexBridge extends Duplex {
+  ws: WebSocket;
+  constructor(ws: WebSocket, opts?: DuplexOptions) {
+    super(opts);
+    this.ws = ws;
+    this.ws.addEventListener(
+      'close',
+      function (this: DuplexBridge) {
+        this.emit('close');
+      }.bind(this),
+    );
+    this.ws.addEventListener(
+      'message',
+      function (this: DuplexBridge, msg: MessageEvent) {
+        this.push(msg.data);
+      }.bind(this),
+    );
+  }
+  end(cb?: () => void) {
+    this.ws.close();
+    if (cb) cb();
+    return this;
+  }
+  _write(
+    chunk: any,
+    bufferEncoding: BufferEncoding,
+    callback: (err: Error | null | undefined) => void,
+  ): void {
+    let err: Error | undefined;
+    try {
+      this.ws.send(chunk.toString());
+    } catch (e) {
+      console.error(e);
+      err = e as Error;
+    }
+    callback(err);
+  }
+  _read(size?: number) {}
+}
+
 export function createMinipaviHandler(
   minitelFactory: (ws: Duplex, req: Request) => any,
   options: MinipaviHandlerOptions = {},
@@ -61,15 +101,11 @@ export function createMinipaviHandler(
         const webSocketPair = new WebSocketPair();
         const client = webSocketPair[0];
         const server = webSocketPair[1];
-  
-        server.accept();
-        const stream = new Duplex();
-        server.addEventListener('message', (event) => stream.write(event.data));
-        stream.on('data', (data) => server.send(data));
-        server.addEventListener('close', () => stream.end());
-        stream.on('close', () => server.close());
 
-        setImmediate(() => minitelFactory(stream, request));
+        server.accept();
+        const stream = new DuplexBridge(server);
+
+        setTimeout(() => minitelFactory(stream, request), 1);
 
         return new Response(null, {
           status: 101,
@@ -84,11 +120,11 @@ export function createMinipaviHandler(
         await request.json(),
       );
 
-      // if (!success) {
-      //   return new Response(`Malformed request: ${JSON.stringify(error)}`, {
-      //     status: 400,
-      //   });
-      // }
+      if (!success) {
+        return new Response(`Malformed request: ${JSON.stringify(error)}`, {
+          status: 400,
+        });
+      }
 
       if (reqUrl.pathname === '/') {
         const newParams = new URLSearchParams();
@@ -110,11 +146,11 @@ export function createMinipaviHandler(
               name: 'connectToWs',
               param: {
                 key: 'Same host <https://npmjs.com/packages/minitel-minipavi>',
-                host: reqUrl.hostname,
+                host: `ssl://${reqUrl.hostname}:443`,
                 path: `/websocket${newParams.toString()}`,
                 echo: 'off',
                 case: 'lower',
-                proto: 'wss',
+                proto: '',
               },
             },
           }),
