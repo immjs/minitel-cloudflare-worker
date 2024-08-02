@@ -12,6 +12,6 @@ export declare class DuplexBridge extends Duplex {
     _read(size?: number): void;
 }
 export declare function createMinipaviHandler(minitelFactory: (ws: Duplex, req: Request) => any, options?: MinipaviHandlerOptions): {
-    fetch(request: Request): Promise<Response | undefined>;
+    fetch(request: Request, _: {}, ctx: ExecutionContext): Promise<Response | undefined>;
 };
 export {};

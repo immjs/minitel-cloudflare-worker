@@ -90,7 +90,7 @@ export function createMinipaviHandler(
   };
 
   return {
-    async fetch(request: Request) {
+    async fetch(request: Request, _: {}, ctx: ExecutionContext) {
       const reqUrl = new URL(request.url);
 
       const upgradeHeader = request.headers.get('Upgrade');
@@ -106,6 +106,9 @@ export function createMinipaviHandler(
         const stream = new DuplexBridge(server);
 
         setTimeout(() => minitelFactory(stream, request), 1);
+
+        const streamEnd = new Promise<void>((r) => stream.on('end', () => r()));
+        ctx.waitUntil(streamEnd);
 
         return new Response(null, {
           status: 101,

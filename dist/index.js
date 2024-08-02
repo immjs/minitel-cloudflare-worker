@@ -69,7 +69,7 @@ export function createMinipaviHandler(minitelFactory, options = {}) {
         ...options,
     };
     return {
-        async fetch(request) {
+        async fetch(request, _, ctx) {
             const reqUrl = new URL(request.url);
             const upgradeHeader = request.headers.get('Upgrade');
             if (reqUrl.pathname === '/websocket') {
@@ -82,6 +82,8 @@ export function createMinipaviHandler(minitelFactory, options = {}) {
                 server.accept();
                 const stream = new DuplexBridge(server);
                 setTimeout(() => minitelFactory(stream, request), 1);
+                const streamEnd = new Promise((r) => stream.on('end', () => r()));
+                ctx.waitUntil(streamEnd);
                 return new Response(null, {
                     status: 101,
                     webSocket: client,
